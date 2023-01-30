@@ -30,7 +30,7 @@ const Game = () => {
       seconds < 10
         ? (timer.textContent = `0${seconds}`)
         : (timer.textContent = seconds);
-      if (seconds == 0) {
+      if (seconds === 0) {
         seconds = 10;
         nextHandler();
       }
