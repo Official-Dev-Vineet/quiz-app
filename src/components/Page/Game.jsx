@@ -6,10 +6,19 @@ import { MdArrowForwardIos } from "react-icons/md";
 import "./game.css";
 import { quiz } from "../Admin/Constraint";
 const Game = () => {
+  // ----- variable -----
+  const [isPlay, setIsPlay] = useState(false);
+  const [questionNumber, setQuestionNumber] = useState(1);
+  let seconds = 60;
+  let score = 0;
+
+  // ----- username promptBox -----
   const user = () => {
     let username = prompt("enter your name");
     localStorage.setItem("username", username);
   };
+
+  // ----- user validation and Retrieve
   const userValidate = () => {
     if (!localStorage.getItem("username")) {
       user();
@@ -17,29 +26,43 @@ const Game = () => {
       console.log("user found as " + localStorage.getItem("username"));
     }
   };
+  // ----- question changer -----
   function nextHandler() {
+    clearInterval(timerId);
     setQuestionNumber((pre) => pre + 1);
+    const option = document.querySelectorAll(".answer-tab li");
+    option.forEach((element) => {
+      element.style.pointerEvents = "all";
+      element.style.borderColor = "var(--border-color)";
+      console.log("done");
+    });
   }
-  const [isPlay, setIsPlay] = useState(false);
-  const [questionNumber, setQuestionNumber] = useState(1);
-  let seconds = 10;
-  function timerValidate() {
-    const updater = setInterval(() => {
-      seconds--;
-      let timer = document.querySelector(".timer");
-      seconds < 10
-        ? (timer.textContent = `0${seconds}`)
-        : (timer.textContent = seconds);
-      if (seconds === 0) {
-        seconds = 10;
-        nextHandler();
-      }
-    }, 1000);
+  function answerHandler(e, userAns, id) {
+    const option = document.querySelectorAll(".answer-tab li");
+    option.forEach((element) => {
+      element.style.pointerEvents = "none";
+      console.log("done");
+    });
+    let answer = quiz[id].answer.trim();
+    if (e.currentTarget.textContent.trim() === answer) {
+      e.currentTarget.style.borderColor = "var(--green-border)";
+      score++;
+    } else {
+      e.currentTarget.style.borderColor = "var(--red-border)";
+    }
   }
-  useEffect(() => {
-    timerValidate();
-    userValidate();
-  }, []);
+  const timerId = setInterval(() => {
+    seconds--;
+    let timer = document.querySelector(".timer");
+    seconds < 10
+      ? (timer.textContent = `0${seconds}`)
+      : (timer.textContent = seconds);
+    if (seconds === 0) {
+      clearInterval(timerId);
+      nextHandler();
+    }
+  }, 1000);
+  userValidate();
   return (
     <div className="game-ui">
       <header>
@@ -74,7 +97,14 @@ const Game = () => {
             </div>
             <ul className="answer-tab">
               {quiz[questionNumber].option.map((element, index) => {
-                return <li key={index}>{element}</li>;
+                return (
+                  <li
+                    key={index}
+                    onClick={(e) => answerHandler(e, element, questionNumber)}
+                  >
+                    {element}
+                  </li>
+                );
               })}
             </ul>
             <div className="next-btn">

@@ -33,6 +33,8 @@ body {
   --red-text: #c50000;
   --green-text: #01ab08;
   --yellow-text: #c58800;
+  --red-border: #ff7a7a;
+  --green-border: #35bd3a;
 }
 .wrapper {
   height: 100%;
