@@ -9,21 +9,22 @@ const Game = () => {
   // ----- variable -----
   const [isPlay, setIsPlay] = useState(false);
   const [questionNumber, setQuestionNumber] = useState(1);
+  const ExistingUsername = localStorage.getItem("username");
   let seconds = 60;
-  let score = 0;
+  const [score, setScore] = useState(0);
 
   // ----- username promptBox -----
   const user = () => {
     let username = prompt("enter your name");
+    while (!username) {
+      username = prompt("enter your name");
+    }
     localStorage.setItem("username", username);
   };
-
   // ----- user validation and Retrieve
   const userValidate = () => {
-    if (!localStorage.getItem("username")) {
+    if (!ExistingUsername) {
       user();
-    } else {
-      console.log("user found as " + localStorage.getItem("username"));
     }
   };
   // ----- question changer -----
@@ -34,24 +35,37 @@ const Game = () => {
     option.forEach((element) => {
       element.style.pointerEvents = "all";
       element.style.borderColor = "var(--border-color)";
-      console.log("done");
     });
   }
-  function answerHandler(e, userAns, id) {
+  function answerHandler(e, id) {
+    let answer = quiz[id].answer.trim();
     const option = document.querySelectorAll(".answer-tab li");
     option.forEach((element) => {
       element.style.pointerEvents = "none";
-      console.log("done");
+      if (element.textContent === answer) {
+        element.style.borderColor = "var(--green-border)";
+      }
     });
-    let answer = quiz[id].answer.trim();
     if (e.currentTarget.textContent.trim() === answer) {
       e.currentTarget.style.borderColor = "var(--green-border)";
-      score++;
+      setScore((pre) => pre + 1);
+      localStorage.setItem(ExistingUsername, score + 1);
+      localStorage.setItem("question-id", id);
+      console.log(id);
+      clearInterval(timerId);
+      setTimeout(() => {
+        nextHandler();
+      }, 3000);
     } else {
       e.currentTarget.style.borderColor = "var(--red-border)";
+      localStorage.setItem("question-id", id);
+      clearInterval(timerId);
+      setTimeout(() => {
+        nextHandler();
+      }, 3000);
     }
   }
-  const timerId = setInterval(() => {
+  let timerId = setInterval(() => {
     seconds--;
     let timer = document.querySelector(".timer");
     seconds < 10
@@ -61,8 +75,35 @@ const Game = () => {
       clearInterval(timerId);
       nextHandler();
     }
+    if (seconds <= 30) {
+      document.querySelector(".game-ui").style.background =
+        "var(--body-bg-yellow)";
+      document.querySelector(".timer-tab").style.background = "var(--yellow)";
+      document.querySelector(".next-btn button").style.color =
+        "var(--yellow-text)";
+    }
+    if (seconds <= 10) {
+      document.querySelector(".game-ui").style.background =
+        "var(--body-bg-red)";
+      document.querySelector(".timer-tab").style.background = "var(--red)";
+      document.querySelector(".next-btn button").style.color =
+        "var(--red-text)";
+    }
+    if (seconds > 30) {
+      document.querySelector(".game-ui").style.background =
+        "var(--body-bg-green)";
+      document.querySelector(".timer-tab").style.background =
+        "var(--btn-bg-success)";
+      document.querySelector(".next-btn button").style.color =
+        "var(--green-text)";
+    }
   }, 1000);
   userValidate();
+  // ----- retrieve old question -----
+  function questionNumberRetrieve() {
+    let number = localStorage.getItem("question-id");
+  }
+  questionNumberRetrieve();
   return (
     <div className="game-ui">
       <header>
@@ -100,7 +141,7 @@ const Game = () => {
                 return (
                   <li
                     key={index}
-                    onClick={(e) => answerHandler(e, element, questionNumber)}
+                    onClick={(e) => answerHandler(e, questionNumber)}
                   >
                     {element}
                   </li>
