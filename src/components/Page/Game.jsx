@@ -17,26 +17,29 @@ const Game = () => {
       console.log("user found as " + localStorage.getItem("username"));
     }
   };
-  const [isPlay, setIsPlay] = useState(false);
-  const [questionNumber, setQuestionNumber] = useState(1);
-  const [seconds, setSeconds] = useState(10);
-  useEffect(() => {
-    let myInterval = setInterval(() => {
-      if (seconds > 0) {
-        setSeconds((pre) => pre - 1);
-      }
-    }, 1000);
-    const updater = setInterval(() => {
-      if (seconds === 0) {
-        clearInterval(myInterval);
-        nextHandler();
-      }
-    }, 1000);
-    userValidate();
-  }, []);
   function nextHandler() {
     setQuestionNumber((pre) => pre + 1);
   }
+  const [isPlay, setIsPlay] = useState(false);
+  const [questionNumber, setQuestionNumber] = useState(1);
+  let seconds = 10;
+  function timerValidate() {
+    const updater = setInterval(() => {
+      seconds--;
+      let timer = document.querySelector(".timer");
+      seconds < 10
+        ? (timer.textContent = `0${seconds}`)
+        : (timer.textContent = seconds);
+      if (seconds == 0) {
+        seconds = 10;
+        nextHandler();
+      }
+    }, 1000);
+  }
+  useEffect(() => {
+    timerValidate();
+    userValidate();
+  }, []);
   return (
     <div className="game-ui">
       <header>
