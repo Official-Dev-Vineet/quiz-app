@@ -1,0 +1,103 @@
+.game-ui {
+  min-height: 100vh;
+  background-color: var(--body-bg-green);
+  padding-top: clamp(1rem, 4vh, 5rem);
+}
+header {
+  max-width: 600px;
+  width: 60%;
+  margin: auto;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 0.5rem;
+}
+.game-controls {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+.icon {
+  font-size: 18px;
+}
+p.text-controls {
+  background-color: var(--primary);
+  padding: 0.2rem;
+  font-weight: 600;
+  font-size: 2rem;
+  border-radius: 0.2rem;
+}
+.quiz-container {
+  width: 60%;
+  max-width: 600px;
+  margin: 1em auto;
+}
+/* question tab  */
+.question-tab {
+  margin: auto;
+}
+.question {
+  font-size: clamp(1.6rem, 2vw, 2rem);
+  font-weight: 500;
+  padding: 3rem;
+  background-color: #fff;
+  width: 100%;
+  box-shadow: inset 0px 0px 1px rgba(0, 0, 0, 0.3);
+  border: 5px solid var(--border-color);
+  border-radius: 1.3rem;
+}
+.number {
+  font-size: clamp(1.6rem, 2vw, 2rem);
+  margin-right: 1rem;
+}
+.timer-tab {
+  border-radius: 0.2rem;
+  margin: 1rem;
+  font-size: clamp(1.6rem, 2vw, 2rem);
+  text-align: center;
+  width: clamp(65px, 70px, 80px);
+  color: #f5f5f5;
+  margin-left: auto;
+  background-color: var(--btn-bg-success);
+}
+.timer {
+  margin-top: 1rem;
+  padding: 0.2rem;
+}
+.answer-tab {
+  width: 100%;
+  padding: 1rem;
+  background-color: #fff;
+  width: 100%;
+  box-shadow: inset 0px 0px 1px rgba(0, 0, 0, 0.3);
+  border: 5px solid var(--border-color);
+  border-radius: 1.3rem;
+}
+.answer-tab li {
+  padding: 0.5rem;
+  font-size: clamp(1.6rem, 2vw, 2rem);
+  font-weight: 500;
+  margin-bottom: 1em;
+  border: 2px solid var(--border-color);
+  border-radius: 0.5rem;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+}
+.answer-tab li:last-child {
+  margin-bottom: 0;
+}
+.next-btn {
+  margin-top: 1.5rem;
+}
+.next-btn button {
+  background-color: transparent;
+  color: var(--green-text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  font-size: clamp(1.4rem, 2vw, 1.8rem);
+  margin-left: auto;
+  cursor: pointer;
+}
