@@ -97,6 +97,7 @@ p.text-controls {
 }
 .next-btn button {
   background-color: transparent;
+  text-transform: capitalize;
   color: var(--green-text);
   display: flex;
   align-items: center;
@@ -115,7 +116,7 @@ p.text-controls {
 .half-timer .timer-tab{
   background-color: var(--yellow);
 }
-.half-timer .next-btn{
+.half-timer .next-btn button{
   color: var(--yellow-text);
 }
 .quarter-half-timer{

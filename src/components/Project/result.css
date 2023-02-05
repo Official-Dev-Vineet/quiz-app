@@ -1,0 +1,78 @@
+.wrapper {
+  gap: 1rem !important;
+  padding: 2rem 1rem;
+  justify-content: flex-start !important;
+}
+.resultBox {
+  margin-top: 4rem;
+  width: 90%;
+  height: 100px;
+  border-radius: 1rem;
+  position: relative;
+  display: flex;
+}
+.resultBox > div {
+  height: 100%;
+  position: relative;
+}
+.resultBox .canvas-1 {
+  background-color: var(--btn-bg-success);
+}
+.resultBox .canvas-2 {
+  background-color: var(--red-border);
+}
+
+.resultBox > div:nth-child(1) p {
+  font-size: clamp(1.4rem, 1.2vw, 2rem);
+  position: absolute;
+  bottom: -20%;
+  left: -20%;
+}
+.resultBox > div:nth-child(1) p::after {
+  content: "";
+  position: inherit;
+  height: calc(50px - 0.7rem);
+  border: 3px solid;
+  bottom: 25px;
+  left: 0px;
+  border-color: #099209 transparent transparent #099209;
+  width: 64px;
+}
+.resultBox > div:nth-child(1) p::before {
+  content: "";
+  position: inherit;
+  width: 1rem;
+  height: 1rem;
+  background-color: #099209;
+  border-radius: 50%;
+  bottom: calc(50px + 1.6rem);
+  left: 64px;
+  z-index: 1;
+}
+.resultBox > div:nth-child(2) p {
+  font-size: clamp(1.4rem, 1.2vw, 2rem);
+  position: absolute;
+  bottom: -20%;
+  right: -20%;
+}
+.resultBox > div:nth-child(2) p::after {
+  content: "";
+  position: absolute;
+  height: calc(50px - 0.7rem);
+  border: 3px solid;
+  bottom: 25px;
+  left: -64px;
+  border-color: #eb4545 #eb4545 transparent transparent;
+  width: 64px;
+}
+.resultBox > div:nth-child(2) p::before {
+  content: "";
+  position: absolute;
+  width: 1rem;
+  height: 1rem;
+  background-color: #eb4545;
+  border-radius: 50%;
+  bottom: calc(50px + 1.6rem);
+  left: -64px;
+  z-index: 1;
+}

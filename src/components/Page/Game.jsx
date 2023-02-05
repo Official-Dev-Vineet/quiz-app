@@ -13,6 +13,8 @@ const Game = () => {
   const [seconds, setSeconds] = useState(60);
   const [score, setScore] = useState(0);
   const [timerId, setTimerId] = useState(false);
+  const [resultId, setResultId] = useState(false);
+  const [activeClass, setActiveClass] = useState("");
 
   // ----- username promptBox -----
   const user = () => {
@@ -20,8 +22,8 @@ const Game = () => {
     while (!username) {
       username = prompt("enter your name");
     }
-    setTimerId(true);
     localStorage.setItem("username", username);
+    setTimerId(true);
   };
   // ----- user validation and Retrieve
   const userValidate = () => {
@@ -29,66 +31,102 @@ const Game = () => {
       user();
     }
   };
-  useEffect(()=>{
-    setQuestionNumber(parseInt(localStorage.getItem("question-id")));
-  },[])
+  // ----- retrieve old question on refresh or if user return
+  useEffect(() => {
+    if (localStorage.getItem("question-id") === null) {
+      setQuestionNumber(0);
+    } else {
+      setQuestionNumber(parseInt(localStorage.getItem("question-id")));
+    }
+  }, []);
   // ----- question changer -----
-  function nextHandler() {
+  const nextHandler = () => {
+    document.querySelector(".next-btn button").style.pointerEvents = "all";
+    document.querySelector(".next-btn button").style.filter = "opacity(100%)";
+    setSeconds(60);
     const body = document.body;
-    body.classList.remove();
+    if (activeClass.length > 0) {
+      body.classList.remove(activeClass);
+    }
+    localStorage.setItem("question-id", questionNumber + 1);
     setQuestionNumber((pre) => pre + 1);
     const option = document.querySelectorAll(".answer-tab li");
     option.forEach((element) => {
       element.style.pointerEvents = "all";
       element.style.borderColor = "var(--border-color)";
     });
-  }
+  };
   // -----onclick answer handler -----
   const answerHandler = (e, id) => {
     let answer = quiz[id].answer.trim();
     const option = document.querySelectorAll(".answer-tab li");
     option.forEach((element) => {
       element.style.pointerEvents = "none";
+      document.querySelector(".next-btn button").style.pointerEvents = "none";
+      document.querySelector(".next-btn button").style.filter = "opacity(10%)";
       if (element.textContent === answer) {
         element.style.borderColor = "var(--green-border)";
       }
     });
-    if (e.currentTarget.textContent.trim() === answer) {
-      e.currentTarget.style.borderColor = "var(--green-border)";
-      setScore((pre) => pre + 1);
-      localStorage.setItem(ExistingUsername, score + 1);
-      localStorage.setItem("question-id", id);
-      console.log(e.currentTarget);
-      setTimeout(() => {
-        nextHandler();
-        setSeconds(60)
-      }, 2000);
+    if (id < 24) {
+      if (e.currentTarget.textContent.trim() === answer) {
+        e.currentTarget.style.borderColor = "var(--green-border)";
+        setScore((pre) => pre + 1);
+        localStorage.setItem(ExistingUsername, score + 1);
+        localStorage.setItem("question-id", id);
+        setTimeout(() => {
+          nextHandler();
+          setSeconds(60);
+        }, 2000);
+      } else {
+        e.currentTarget.style.borderColor = "var(--red-border)";
+        localStorage.setItem("question-id", id);
+        setTimeout(() => {
+          nextHandler();
+          setSeconds(60);
+        }, 3000);
+      }
     } else {
-      e.currentTarget.style.borderColor = "var(--red-border)";
-      localStorage.setItem("question-id", id);
-      setTimeout(() => {
-        nextHandler();
-        setSeconds(60)
-      }, 3000);
+      if (e.currentTarget.textContent.trim() === answer) {
+        e.currentTarget.style.borderColor = "var(--green-border)";
+        setScore((pre) => pre + 1);
+        localStorage.setItem(ExistingUsername, score + 1);
+        localStorage.setItem("question-id", 0);
+        setTimeout(() => {
+          resultHandler();
+        }, 2000);
+      } else {
+        e.currentTarget.style.borderColor = "var(--red-border)";
+        localStorage.setItem("question-id", 0);
+        setTimeout(() => {
+          resultHandler();
+        }, 2000);
+      }
     }
+  };
+  // ----- result handler -----
+  const resultHandler = () => {
+    window.history.pushState(score, "result", `/result/${ExistingUsername}`);
   };
   useMemo(() => {
     const body = document.body;
+    const classList = document.body.classList[0];
     if (seconds > 30) {
-      console.log("going well");
+      body.classList.remove(classList);
     }
     if (seconds < 30) {
       body.classList.add("half-timer");
+      setActiveClass("half-timer");
     }
     if (seconds < 10) {
-      body.classList.remove("half-timer");
+      body.classList.remove(activeClass);
       body.classList.add("quarter-half-timer");
+      setActiveClass("quarter-half-time");
     }
     if (seconds === 0) {
-      body.classList.remove("quarter-half-timer");
-      nextHandler();
+      body.classList.remove(activeClass);
+      questionNumber < 24 ? nextHandler() : resultHandler();
       setSeconds(60);
-      setTimerId(false);
     }
   }, [seconds]);
   useEffect(() => {
@@ -99,12 +137,10 @@ const Game = () => {
   }, [timerId]);
   useEffect(() => {
     if (questionNumber == 24) {
-      document.querySelector(".next-btn button").textContent =
-        "result Calculating";
       document.querySelector(".next-btn button").style.pointerEvents = "none";
-    }
-    if (seconds === 0) {
-      setTimerId(false);
+      setTimeout(() => {
+        resultHandler();
+      }, 2000);
     }
     userValidate();
   }, [questionNumber]);
