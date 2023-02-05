@@ -8,10 +8,11 @@ import { quiz } from "../Admin/Constraint";
 const Game = () => {
   // ----- variable -----
   const [isPlay, setIsPlay] = useState(false);
-  const [questionNumber, setQuestionNumber] = useState(1);
+  const [questionNumber, setQuestionNumber] = useState(0);
   const ExistingUsername = localStorage.getItem("username");
-  let seconds = 60;
+  const [seconds, setSeconds] = useState(60);
   const [score, setScore] = useState(0);
+  const [timerId, setTimerId] = useState(false);
 
   // ----- username promptBox -----
   const user = () => {
@@ -19,6 +20,7 @@ const Game = () => {
     while (!username) {
       username = prompt("enter your name");
     }
+    setTimerId(true);
     localStorage.setItem("username", username);
   };
   // ----- user validation and Retrieve
@@ -27,9 +29,13 @@ const Game = () => {
       user();
     }
   };
+  useEffect(()=>{
+    setQuestionNumber(parseInt(localStorage.getItem("question-id")));
+  },[])
   // ----- question changer -----
   function nextHandler() {
-    clearInterval(timerId);
+    const body = document.body;
+    body.classList.remove();
     setQuestionNumber((pre) => pre + 1);
     const option = document.querySelectorAll(".answer-tab li");
     option.forEach((element) => {
@@ -37,7 +43,8 @@ const Game = () => {
       element.style.borderColor = "var(--border-color)";
     });
   }
-  function answerHandler(e, id) {
+  // -----onclick answer handler -----
+  const answerHandler = (e, id) => {
     let answer = quiz[id].answer.trim();
     const option = document.querySelectorAll(".answer-tab li");
     option.forEach((element) => {
@@ -51,59 +58,56 @@ const Game = () => {
       setScore((pre) => pre + 1);
       localStorage.setItem(ExistingUsername, score + 1);
       localStorage.setItem("question-id", id);
-      console.log(id);
-      clearInterval(timerId);
+      console.log(e.currentTarget);
       setTimeout(() => {
         nextHandler();
-      }, 3000);
+        setSeconds(60)
+      }, 2000);
     } else {
       e.currentTarget.style.borderColor = "var(--red-border)";
       localStorage.setItem("question-id", id);
-      clearInterval(timerId);
       setTimeout(() => {
         nextHandler();
+        setSeconds(60)
       }, 3000);
     }
-  }
-  let timerId = setInterval(() => {
-    seconds--;
-    let timer = document.querySelector(".timer");
-    seconds < 10
-      ? (timer.textContent = `0${seconds}`)
-      : (timer.textContent = seconds);
-    if (seconds === 0) {
-      clearInterval(timerId);
-      nextHandler();
-    }
-    if (seconds <= 30) {
-      document.querySelector(".game-ui").style.background =
-        "var(--body-bg-yellow)";
-      document.querySelector(".timer-tab").style.background = "var(--yellow)";
-      document.querySelector(".next-btn button").style.color =
-        "var(--yellow-text)";
-    }
-    if (seconds <= 10) {
-      document.querySelector(".game-ui").style.background =
-        "var(--body-bg-red)";
-      document.querySelector(".timer-tab").style.background = "var(--red)";
-      document.querySelector(".next-btn button").style.color =
-        "var(--red-text)";
-    }
+  };
+  useMemo(() => {
+    const body = document.body;
     if (seconds > 30) {
-      document.querySelector(".game-ui").style.background =
-        "var(--body-bg-green)";
-      document.querySelector(".timer-tab").style.background =
-        "var(--btn-bg-success)";
-      document.querySelector(".next-btn button").style.color =
-        "var(--green-text)";
+      console.log("going well");
     }
-  }, 1000);
-  userValidate();
-  // ----- retrieve old question -----
-  function questionNumberRetrieve() {
-    let number = localStorage.getItem("question-id");
-  }
-  questionNumberRetrieve();
+    if (seconds < 30) {
+      body.classList.add("half-timer");
+    }
+    if (seconds < 10) {
+      body.classList.remove("half-timer");
+      body.classList.add("quarter-half-timer");
+    }
+    if (seconds === 0) {
+      body.classList.remove("quarter-half-timer");
+      nextHandler();
+      setSeconds(60);
+      setTimerId(false);
+    }
+  }, [seconds]);
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setSeconds((pre) => pre - 1);
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [timerId]);
+  useEffect(() => {
+    if (questionNumber == 24) {
+      document.querySelector(".next-btn button").textContent =
+        "result Calculating";
+      document.querySelector(".next-btn button").style.pointerEvents = "none";
+    }
+    if (seconds === 0) {
+      setTimerId(false);
+    }
+    userValidate();
+  }, [questionNumber]);
   return (
     <div className="game-ui">
       <header>
@@ -116,8 +120,10 @@ const Game = () => {
           </span>
 
           <p className="text-controls">
-            {questionNumber < 10 ? `0${questionNumber}` : questionNumber}/
-            {quiz.length}
+            {questionNumber < 10
+              ? `0${questionNumber + 1}`
+              : questionNumber + 1}
+            /{quiz.length}
           </p>
         </div>
       </header>
@@ -126,7 +132,7 @@ const Game = () => {
           <div className="quiz-container">
             <div className="question-tab">
               <div className="question">
-                <span className="number">{questionNumber}.</span>
+                <span className="number">{questionNumber + 1}.</span>
                 {quiz[questionNumber].question}
               </div>
               <div className="timer-tab">

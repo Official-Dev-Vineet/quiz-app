@@ -17,6 +17,7 @@ html {
 body {
   font-family: "Poppins", sans-serif;
   min-height: 100vh;
+  background-color: var(--body-bg-green);
 }
 :root {
   --primary: hsl(50, 100%, 50%);

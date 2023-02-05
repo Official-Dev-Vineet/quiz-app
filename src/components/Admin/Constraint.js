@@ -47,7 +47,7 @@ export const quiz = [
   {
     "id": 6,
     "question": "JavaScript ignores?",
-    "option": ["newlines", "tabs", "spaces", " All of the above"],
+    "option": ["newlines", "tabs", "spaces", "All of the above"],
     "answer": "All of the above"
   },
   {
