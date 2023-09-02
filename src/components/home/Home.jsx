@@ -1,18 +1,21 @@
+import {useEffect} from "react"
 import image from "./images/logo.png";
 import { MdOutlineArrowForwardIos } from "react-icons/md";
 import { Link } from "react-router-dom";
 const Home = () => {
-  let LastScore = score();
   function score() {
     let lastUserData = localStorage.getItem("username");
     if (localStorage.getItem("username")) {
-      return `High Score : ${
+      return `High Score: ${
         localStorage.getItem(lastUserData) === null
           ? "00"
           : localStorage.getItem(lastUserData)
       }`;
     }
   }
+  useEffect(()=>{
+    score();
+  },[])
   return (
     <div className="wrapper">
       <div className="image">
